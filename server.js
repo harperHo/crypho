@@ -7,6 +7,7 @@ import { execute, subscribe } from 'graphql';
 
 import config from './configs';
 import schema from './graphql';
+import socketClient from './socketClient';
 
 const app = express();
 

@@ -1,4 +1,4 @@
-import getPubSub from '../utils/getPubSub.js';
+import getPubSub from '../utils/getPubSub';
 import { USERS_CHANGED } from '../topics';
 
 export default {
