@@ -1,4 +1,4 @@
-import { subscribeTicker, getTicker } from './ticker';
+import { subscribeTicker, getSocketData } from './ticker';
 
 // Trigger subscription
 export const subscribeExchangeData = (base, quote) => {
@@ -7,7 +7,5 @@ export const subscribeExchangeData = (base, quote) => {
 
 // Compose data here
 export const getExchangeData = () => {
-	return {
-		ticker: getTicker()
-	};
+	return Object.assign({}, getSocketData())
 }

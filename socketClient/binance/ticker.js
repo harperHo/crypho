@@ -1,6 +1,6 @@
 import createSocketClient from '../utils/createSocketClient';
 
-let ticker;
+const socketData = {};
 
 export const subscribeTicker = (base, quote) => {
 	const _base = base.toLowerCase();
@@ -10,9 +10,13 @@ export const subscribeTicker = (base, quote) => {
 
 	socketClient.on('connect', function(connection) {
 		connection.on('message', function(data) {
-		  ticker = data.utf8Data;
+			const _data = JSON.parse(data.utf8Data);
+
+			socketData.pct = _data.P;
+		  socketData.price = _data.c;
+			socketData.vol = _data.v; // base asset volume
 		});
 	});
 }
 
-export const getTicker = () => ticker;
+export const getSocketData = () => socketData;

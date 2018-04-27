@@ -1,6 +1,8 @@
 import { client } from 'websocket';
 
-export default (ws, channel) => {
+export default (options) => {
+
+	const { ws, initCallback, subscribeCallback } = options;
 	
 	const websocketClient = new client();
 
@@ -11,7 +13,15 @@ export default (ws, channel) => {
 	websocketClient.on('connect', function(connection) {
 		console.log('WebSocket Client Connected');
 
-		if (channel !== undefined) connection.send(channel);
+		if (initCallback && typeof initCallback === 'function') {
+			initCallback(connection);
+		}
+
+		connection.on('message', function(data) {
+			if (subscribeCallback && typeof subscribeCallback === 'function') {
+				subscribeCallback(data);
+			}
+		});
 
 		connection.on('error', function(error) {
         console.log("Connection Error: " + error.toString());

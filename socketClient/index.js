@@ -1,7 +1,21 @@
-import { subscribeExchangeData, getExchangeData } from './binance';
+import { merge } from 'lodash';
 
-subscribeExchangeData('ETH', 'BTC');
+import { subscribeBitfinex } from './bitfinex';
 
-setInterval(() => {
-	console.log(getExchangeData());
-}, 2000);
+let result = {};
+
+const compose = (_data) => {
+	const { exchange, base, quote, data } = _data;
+
+	const obj = {
+		[base]: {
+			[exchange]: data
+		}
+	};
+
+	result = merge(result, obj);
+
+	console.log(result);
+};
+
+subscribeBitfinex(compose);
