@@ -6,6 +6,8 @@ import Message from './Message';
 import Post from './Post';
 import RemoveUserPayload from './RemoveUserPayload';
 import User from './User';
+import Currency from './Currency';
+import Exchange from './Exchange';
 
 let typeDefs = '';
 
@@ -16,7 +18,9 @@ typeDefs = typeDefs.concat(
 	Message,
 	Post,
 	RemoveUserPayload,
-	User
+	User,
+	Currency,
+	Exchange
 );
 
 export default typeDefs;
