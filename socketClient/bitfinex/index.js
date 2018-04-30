@@ -26,20 +26,17 @@ const dataFormatter = (data, cb) => {
 			const pair = pairChanMap[_data[0]];
 			const socketData = {};
 			const base = pair.substring(0, 3);
-			const quote = pair.substring(3, 6);
 
-			socketData.pct = _data[6];
+			socketData.exchange = 'Bitfinex';
+			socketData.pct = _data[6] * 100;
 			socketData.price = _data[7];
 			socketData.vol = _data[8];
 
 			cb({
-				exchange: 'Bitfinex',
-				base,
-				quote,
+				currency: base,
 				data: socketData
-			});
+			})
 		}
-		
 	}
 }
 

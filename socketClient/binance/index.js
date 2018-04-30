@@ -1,11 +1,47 @@
-import { subscribeTicker, getSocketData } from './ticker';
+import createSocketClient from '../utils/createSocketClient';
+import pairs from '../configs/pairs';
 
-// Trigger subscription
-export const subscribeExchangeData = (base, quote) => {
-	subscribeTicker(base, quote);
-};
+let binanceSktObj = null;
+const pairChanMap = {};
 
-// Compose data here
-export const getExchangeData = () => {
-	return Object.assign({}, getSocketData())
+let ws = 'wss://stream.binance.com:9443/ws/';
+
+for (let i = 0; i < pairs.length; i++) {
+	const pair = pairs[i];
+	let base = pair[0].toLowerCase();
+	let quote = pair[1].toLowerCase();
+
+	base = base === 'usd' ? 'usdt' : base;
+	quote = quote === 'usd' ? 'usdt' : quote;
+
+	ws = `${ws}${base}${quote}@ticker/`;
 }
+
+const dataFormatter = (data, cb) => {
+	const _data = JSON.parse(data.utf8Data);
+	const pair = _data.s;
+	const socketData = {};
+	const base = pair.substring(0, 3);
+	const quote = 'usd';
+
+	socketData.exchange = 'Binance';
+	socketData.pct = parseFloat(_data.P);
+	socketData.price = parseFloat(_data.c);
+	socketData.vol = parseFloat(_data.v);
+
+	cb({
+		currency: base,
+		data: socketData
+	});
+}
+
+export const subscribeBinance = (cb) => {
+	const options = {
+		ws,
+		subscribeCallback: (data) => {
+			dataFormatter(data, cb);
+		}
+	}
+
+	binanceSktObj = createSocketClient(options);
+};
