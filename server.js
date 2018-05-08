@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { createServer } from 'http';
 import bodyParser from 'body-parser';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
@@ -10,6 +11,8 @@ import schema from './graphql';
 import socketClient from './socketClient';
 
 const app = express();
+
+app.use(cors());
 
 app.use('/graphql', bodyParser.json(), graphqlExpress({
 	schema

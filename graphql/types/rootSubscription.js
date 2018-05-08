@@ -1,7 +1,7 @@
 const rootSubscription = `
 	type Subscription {
     userAdded: Message
-    newPrice: [Currency!]!
+    newPrice(currencies: [String]!): [Currency!]!
   }
 `;
 

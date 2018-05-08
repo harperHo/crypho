@@ -1,4 +1,3 @@
-// import { merge } from 'lodash';
 import { NEW_PRICE } from '../graphql/topics';
 import getPubSub from '../graphql/utils/getPubSub.js';
 
@@ -13,12 +12,12 @@ const compose = (_data) => {
 	const { exchange } = data;
 
 	const currencyIndex = result.findIndex((_currency) => {
-		return _currency.name === currency;
+		return _currency.currency === currency;
 	});
 
 	if (currencyIndex === -1) {
 		result.push({
-			name: currency,
+			currency,
 			exchanges: [data]
 		});
 	} else {
@@ -37,15 +36,7 @@ const compose = (_data) => {
 		}
 	}
 
-	// console.log(JSON.stringify(result));
-	// console.log('new price');
-
-	// pubsub.publish(NEW_PRICE, { newPrice: {message: 'price has been changed' }});
-	// pubsub.publish(NEW_PRICE, { result });
 	pubsub.publish(NEW_PRICE, { newPrice: result });
-
-
-	// console.log(result);
 };
 
 subscribeBitfinex(compose);

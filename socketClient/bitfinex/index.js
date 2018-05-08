@@ -17,7 +17,7 @@ for (let i = 0; i < pairs.length; i++) {
 
 const dataFormatter = (data, cb) => {
 	const _data = JSON.parse(data.utf8Data);
-	
+
 	if (_data.event !== 'info' && _data[1] !== 'hb') {
 
 		if (_data.event === 'subscribed') {
