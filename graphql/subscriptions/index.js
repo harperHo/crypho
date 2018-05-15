@@ -1,9 +1,9 @@
 import { merge } from 'lodash';
 import users from './users';
-import currencies from './currencies';
+import market from './market';
 
 export default merge(
 	{},
 	users,
-	currencies
+	market
 );

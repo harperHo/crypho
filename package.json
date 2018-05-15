@@ -11,6 +11,7 @@
     "graphql-subscriptions": "^0.5.8",
     "graphql-tools": "^2.24.0",
     "lodash": "^4.17.10",
+    "node-fetch": "^2.1.2",
     "pg": "^7.4.1",
     "subscriptions-transport-ws": "^0.9.7",
     "websocket": "^1.0.25"

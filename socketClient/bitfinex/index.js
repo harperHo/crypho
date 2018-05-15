@@ -1,21 +1,24 @@
 import createSocketClient from '../utils/createSocketClient';
-import pairs from '../configs/pairs';
+import currencies from '../../data/currencies';
+
+import { UPDATE_TICKER } from '../../graphql/topics';
+import getPubSub from '../../graphql/utils/getPubSub.js';
 
 let bitfinexSktObj = null;
 const pairChanMap = {};
 
 const channelList = [];
 
-for (let i = 0; i < pairs.length; i++) {
-	const pair = pairs[i];
+for (let i = 0; i < currencies.length; i++) {
+	const currency = currencies[i];
 	channelList.push({
 		"event": "subscribe",
 		"channel": "ticker",
-		"pair": `${pair[0]}${pair[1]}`
+		"pair": `${currency}USD`
 	})
 }
 
-const dataFormatter = (data, cb) => {
+const dataFormatter = (data) => {
 	const _data = JSON.parse(data.utf8Data);
 
 	if (_data.event !== 'info' && _data[1] !== 'hb') {
@@ -24,23 +27,34 @@ const dataFormatter = (data, cb) => {
 			pairChanMap[_data.chanId] = _data.pair;
 		} else {
 			const pair = pairChanMap[_data[0]];
-			const socketData = {};
+			// const socketData = {};
 			const base = pair.substring(0, 3);
 
-			socketData.exchange = 'Bitfinex';
-			socketData.pct = _data[6] * 100;
-			socketData.price = _data[7];
-			socketData.vol = _data[8];
+			// socketData.exchange = 'Bitfinex';
+			// socketData.pct = _data[6] * 100;
+			// socketData.price = _data[7];
+			// socketData.vol = _data[8];
 
-			cb({
-				currency: base,
-				data: socketData
-			})
+			// cb({
+			// 	currency: base,
+			// 	data: socketData
+			// })
+
+      return {
+        currency: base,
+        ticker: {
+          exchange: 'Bitfinex',
+          price: _data[7],
+          vol: _data[8],
+          pct: _data[6] * 100,
+        }
+      };
 		}
 	}
 }
 
-export const subscribeBitfinex = (cb) => {
+export const subscribeBitfinex = () => {
+  const pubsub = getPubSub();
 	const options = {
 		ws: 'wss://api.bitfinex.com/ws',
 		initCallback: (connection) => {
@@ -49,7 +63,9 @@ export const subscribeBitfinex = (cb) => {
 			}
 		},
 		subscribeCallback: (data) => {
-			dataFormatter(data, cb);
+      // console.log(data);
+      const updatedTicker = dataFormatter(data);
+      if (updatedTicker) pubsub.publish(UPDATE_TICKER, { updateTicker: updatedTicker });
 		}
 	}
 

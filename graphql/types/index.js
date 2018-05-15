@@ -8,6 +8,7 @@ import RemoveUserPayload from './RemoveUserPayload';
 import User from './User';
 import Currency from './Currency';
 import Exchange from './Exchange';
+import UpdatedTicker from './UpdatedTicker';
 
 let typeDefs = '';
 
@@ -20,7 +21,8 @@ typeDefs = typeDefs.concat(
 	RemoveUserPayload,
 	User,
 	Currency,
-	Exchange
+	Exchange,
+  UpdatedTicker
 );
 
 export default typeDefs;

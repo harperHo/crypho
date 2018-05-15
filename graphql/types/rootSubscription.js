@@ -1,8 +1,15 @@
 const rootSubscription = `
 	type Subscription {
     userAdded: Message
-    newPrice(currencies: [String]!): [Currency!]!
+    updateTicker: UpdatedTicker!
   }
 `;
+
+// const rootSubscription = `
+//   type Subscription {
+//     userAdded: Message
+//     updateTicker(currencies: [String]!): [Currency!]!
+//   }
+// `;
 
 export default rootSubscription;

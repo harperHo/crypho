@@ -3,7 +3,7 @@ import { client } from 'websocket';
 export default (options) => {
 
 	const { ws, initCallback, subscribeCallback } = options;
-	
+
 	const websocketClient = new client();
 
 	websocketClient.on('connectFailed', function(error) {
@@ -18,6 +18,7 @@ export default (options) => {
 		}
 
 		connection.on('message', function(data) {
+
 			if (subscribeCallback && typeof subscribeCallback === 'function') {
 				subscribeCallback(data);
 			}

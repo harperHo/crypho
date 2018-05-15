@@ -26,13 +26,13 @@ const port = app.get('port');
 // Register API middleware
 app.use('/graphiql', graphiqlExpress({
 	endpointURL: '/graphql',
-	subscriptionsEndpoint: `ws://localhost:3000/subscriptions`,
+	subscriptionsEndpoint: `ws://localhost:3000/`,
 }));
 
 server.listen(port, () => {
 
 	// Set up the WebSocket for handling GraphQL subscriptions.
-	new SubscriptionServer({ schema, execute, subscribe }, { server, path: '/subscriptions'});
+	new SubscriptionServer({ schema, execute, subscribe }, { server, path: '/'});
 
 	console.log(`GraphQL Server is now running on http://localhost:3000`);
   console.log(`Subscriptions are running on ws://localhost:3000/subscriptions`);

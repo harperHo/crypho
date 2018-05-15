@@ -1,2 +1,2 @@
 export const USERS_CHANGED = 'users_changed';
-export const NEW_PRICE = 'new_price';
+export const UPDATE_TICKER = 'update_ticker';
