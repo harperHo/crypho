@@ -2,7 +2,7 @@
 // import getPubSub from '../graphql/utils/getPubSub.js';
 
 import { subscribeBitfinex } from './bitfinex';
-import { subscribeBinance } from './binance';
+// import { subscribeBinance } from './binance';
 
 // let result = [];
 
@@ -43,4 +43,4 @@ import { subscribeBinance } from './binance';
 // subscribeBinance(compose);
 
 subscribeBitfinex();
-subscribeBinance();
+// subscribeBinance();

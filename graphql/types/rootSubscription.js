@@ -1,13 +1,11 @@
 const rootSubscription = `
 	type Subscription {
-    userAdded: Message
-    updateTicker: UpdatedTicker!
+    updateTicker: Ticker!
   }
 `;
 
 // const rootSubscription = `
 //   type Subscription {
-//     userAdded: Message
 //     updateTicker(currencies: [String]!): [Currency!]!
 //   }
 // `;

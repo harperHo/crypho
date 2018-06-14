@@ -1,60 +1,87 @@
 import fetch  from 'node-fetch';
 
-import currencies from '../../data/currencies';
+import pairs from '../../data/pairs';
+
+const fetchData = function(exchange, url) {
+  return fetch(url)
+  .then(res => {
+    return res.json();
+  })
+  .catch(err => {
+    console.error(`Error: failed to fetch from ${exchange} (${url})`);
+  })
+};
 
 export default {
-  currencies: () => {
-    return currencies;
-  },
-  tickers: () => {
+  pairs: () => pairs,
+  market: () => {
     const urls = {
-      Bitfinex: `https://api.bitfinex.com/v2/tickers?symbols=t${currencies.map(currency => `${currency}USD`).join(',t')}`, // Bitfinex
+      Bitfinex: `https://api.bitfinex.com/v2/tickers?symbols=t${pairs.join(',t')}`, // Bitfinex
       Binance: `https://api.binance.com/api/v1/ticker/24hr` // Binance
+      // Binance: 'https://wefjiw.com'
     };
-    const exchangesList = Object.keys(urls);
+    const exchanges = Object.keys(urls);
 
-    // console.log(urls);
-
-    return Promise.all(exchangesList.map(exchange => fetch(urls[exchange])))
-      .then(responses => Promise.all(responses.map(res => res.json())))
+    return Promise.all(exchanges.map(exchange => fetchData(exchange, urls[exchange])))
       .then(json => {
-        return currencies.map(currency => {
-          const exchanges = [];
+        const result = [];
 
-          exchangesList.forEach((exchange, index) => {
-            const exchangeData = json[index];
+        exchanges.forEach((exchange, index) => {
+          const tickers = json[index];
 
-            if (exchange === 'Bitfinex') {
-              const indexOfTicker = exchangeData.findIndex(element => element[0] === `t${currency.toUpperCase()}USD`)
-              const ticker = exchangeData[indexOfTicker];
+          if (!tickers) return;
 
-              exchanges.push({
+          if (exchange === 'Bitfinex') {
+            tickers.map(ticker => {
+              let symbol = ticker[0];
+              symbol = symbol.substring(1); // E.g., 'tBTCUSD' --> 'BTCUSD'
+
+              const index = result.findIndex(element => element.symbol === symbol);
+              const exchangeData = {
                 exchange: 'Bitfinex',
                 price: ticker[7],
                 vol: ticker[8],
                 pct: ticker[6],
-              });
+              };
 
-            } else if (exchange === 'Binance') {
-              const ticker = exchangeData.find(element => element.symbol === `${currency}USDT`);
-              console.log(exchangeData);
+              if (index === -1) {
+                result.push({
+                  symbol,
+                  exchanges: [exchangeData],
+                });
+              } else {
+                result[index].exchanges.push(exchangeData);
+              }
+
+            })
+          } else if (exchange === 'Binance') {
+
+            pairs.map(pair => {
+              const ticker = tickers.find(element => element.symbol === pair);
 
               if (ticker) {
-                exchanges.push({
+                const index = result.findIndex(element => element.symbol === pair);
+                const exchangeData = {
                   exchange: 'Binance',
                   price: ticker.lastPrice,
                   vol: ticker.volume,
                   pct: ticker.priceChangePercent,
-                });
-              }
-            }
-          });
+                };
 
-          return {
-            currency,
-            exchanges,
-          };
+                if (index === -1) {
+                  result.push({
+                    symbol: pair,
+                    exchanges: [exchangeData],
+                  });
+                } else {
+                  result[index].exchanges.push(exchangeData);
+                }
+              }
+            });
+          }
         });
+
+        return result;
       });
   }
-};
+}

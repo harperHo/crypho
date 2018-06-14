@@ -1,6 +1,6 @@
 const Currency = `
 	type Currency {
-		currency: String!
+		symbol: String!
 		exchanges: [Exchange!]!
 	}
 `;

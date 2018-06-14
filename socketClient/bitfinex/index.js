@@ -1,5 +1,5 @@
 import createSocketClient from '../utils/createSocketClient';
-import currencies from '../../data/currencies';
+import pairs from '../../data/pairs';
 
 import { UPDATE_TICKER } from '../../graphql/topics';
 import getPubSub from '../../graphql/utils/getPubSub.js';
@@ -9,12 +9,12 @@ const pairChanMap = {};
 
 const channelList = [];
 
-for (let i = 0; i < currencies.length; i++) {
-	const currency = currencies[i];
+for (let i = 0; i < pairs.length; i++) {
+	const pair = pairs[i];
 	channelList.push({
 		"event": "subscribe",
 		"channel": "ticker",
-		"pair": `${currency}USD`
+		"pair": pair,
 	})
 }
 
@@ -23,25 +23,13 @@ const dataFormatter = (data) => {
 
 	if (_data.event !== 'info' && _data[1] !== 'hb') {
 
+    if (_data.event === 'error') return;
 		if (_data.event === 'subscribed') {
 			pairChanMap[_data.chanId] = _data.pair;
 		} else {
-			const pair = pairChanMap[_data[0]];
-			// const socketData = {};
-			const base = pair.substring(0, 3);
-
-			// socketData.exchange = 'Bitfinex';
-			// socketData.pct = _data[6] * 100;
-			// socketData.price = _data[7];
-			// socketData.vol = _data[8];
-
-			// cb({
-			// 	currency: base,
-			// 	data: socketData
-			// })
 
       return {
-        currency: base,
+        symbol: pairChanMap[_data[0]],
         ticker: {
           exchange: 'Bitfinex',
           price: _data[7],
@@ -63,7 +51,6 @@ export const subscribeBitfinex = () => {
 			}
 		},
 		subscribeCallback: (data) => {
-      // console.log(data);
       const updatedTicker = dataFormatter(data);
       if (updatedTicker) pubsub.publish(UPDATE_TICKER, { updateTicker: updatedTicker });
 		}
@@ -71,4 +58,3 @@ export const subscribeBitfinex = () => {
 
 	bitfinexSktObj = createSocketClient(options);
 };
-
